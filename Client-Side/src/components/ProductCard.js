@@ -28,7 +28,7 @@ function ProductCard(props) {
           <ul className="nav nav-pills nav-justified">
             <li>
               <a href="#">
-                <i className="fas fa-eye"></i>Consulter produit
+                <i class=" ti-eye"></i>Consulter produit
               </a>
             </li>
           </ul>

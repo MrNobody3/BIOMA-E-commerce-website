@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CategoriesNav from "./components/CategoriesNav";
-import ProductByCategorie from "./components/ProductByCategorie";
+import Header from "./components/Header";
 
 function App() {
   const produit = {
@@ -11,9 +11,12 @@ function App() {
     categorie: "Categorie 1"
   };
   return (
-    <BrowserRouter>
-      <CategoriesNav />
-    </BrowserRouter>
+    <>
+      <Header />
+      <BrowserRouter>
+        <CategoriesNav />
+      </BrowserRouter>
+    </>
   );
 }
 
