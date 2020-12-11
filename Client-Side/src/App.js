@@ -1,22 +1,47 @@
 import "./App.css";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter } from "react-router-dom";
 import CategoriesNav from "./components/CategoriesNav";
 import Header from "./components/Header";
+import { CookiesProvider, Cookies } from "react-cookie";
+import { useImmerReducer } from "use-immer";
+import StateContext from "./StateContext";
+import DispatchContext from "./DispatchContext";
 
 function App() {
-  const produit = {
-    img: "https://media.macphun.com/img/uploads/customer/how-to/579/15531840725c93b5489d84e9.43781620.jpg?q=85&w=1340",
-    name: "Test produit",
-    price: "20.00",
-    categorie: "Categorie 1"
+  const initialValue = {
+    shoppingCartCount: 0,
+    flashMessages: []
   };
+  function ourReducer(draft, action) {
+    switch (action.type) {
+      case "incrementShoppingCartCount":
+        draft.shoppingCartCount++;
+        return;
+    }
+  }
+
+  const [state, dispatch] = useImmerReducer(ourReducer, initialValue);
+
+  useEffect(() => {
+    var cookiesFromBrowser = new Cookies();
+    if (cookiesFromBrowser.get("shoppingCart") && cookiesFromBrowser.get("shoppingCart").length) {
+      for (let i = 0; i < cookiesFromBrowser.get("shoppingCart").length; i++) {
+        dispatch({ type: "incrementShoppingCartCount" });
+      }
+    }
+  }, []);
   return (
-    <>
-      <Header />
-      <BrowserRouter>
-        <CategoriesNav />
-      </BrowserRouter>
-    </>
+    <CookiesProvider>
+      <StateContext.Provider value={state}>
+        <DispatchContext.Provider value={dispatch}>
+          <BrowserRouter>
+            <Header />
+            <CategoriesNav />
+          </BrowserRouter>
+        </DispatchContext.Provider>
+      </StateContext.Provider>
+    </CookiesProvider>
   );
 }
 

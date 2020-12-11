@@ -1,6 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useContext } from "react";
+import StateContext from "../StateContext";
 
 function Header() {
+  const appState = useContext(StateContext);
   return (
     <>
       <header id="header">
@@ -112,9 +114,9 @@ function Header() {
                 <div className="shop-menu clearfix pull-right">
                   <ul className="nav navbar-nav">
                     <li>
-                      <div class="sinlge-bar shopping">
-                        <a href="#" class="single-icon">
-                          <i class="ti-bag"></i> <span class="total-count">2</span>
+                      <div className="sinlge-bar shopping">
+                        <a href="#" className="single-icon">
+                          <i className="ti-bag"></i> <span className="total-count">{appState.shoppingCartCount < 10 ? appState.shoppingCartCount : "9+"}</span>
                         </a>
                       </div>
                     </li>
