@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import StateContext from "../StateContext";
+import { Link } from "react-router-dom";
 
 function Header() {
   const appState = useContext(StateContext);
@@ -115,9 +116,12 @@ function Header() {
                   <ul className="nav navbar-nav">
                     <li>
                       <div className="sinlge-bar shopping">
-                        <a href="#" className="single-icon">
+                        <Link className="single-icon" to="/cart">
                           <i className="ti-bag"></i> <span className="total-count">{appState.shoppingCartCount < 10 ? appState.shoppingCartCount : "9+"}</span>
-                        </a>
+                        </Link>
+                        {/* <a href="#" className="single-icon">
+                          <i className="ti-bag"></i> <span className="total-count">{appState.shoppingCartCount < 10 ? appState.shoppingCartCount : "9+"}</span>
+                        </a> */}
                       </div>
                     </li>
                   </ul>

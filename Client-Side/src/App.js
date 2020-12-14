@@ -1,12 +1,13 @@
 import "./App.css";
 import { useEffect } from "react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CategoriesNav from "./components/CategoriesNav";
 import Header from "./components/Header";
 import { CookiesProvider, Cookies } from "react-cookie";
 import { useImmerReducer } from "use-immer";
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
+import Cart from "./components/Cart";
 
 function App() {
   const initialValue = {
@@ -37,7 +38,14 @@ function App() {
         <DispatchContext.Provider value={dispatch}>
           <BrowserRouter>
             <Header />
-            <CategoriesNav />
+            <Switch>
+              <Route path="/" exact>
+                <CategoriesNav />
+              </Route>
+              <Route path="/cart">
+                <Cart />
+              </Route>
+            </Switch>
           </BrowserRouter>
         </DispatchContext.Provider>
       </StateContext.Provider>
