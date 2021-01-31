@@ -19,12 +19,22 @@ function BasketLigne(props) {
         </td>
         <td className="cart_quantity">
           <div className="cart_quantity_button">
-            <a className="cart_quantity_up" href="">
+            <a
+              className="cart_quantity_up"
+              onClick={() => {
+                props.incrementAmount(props.amount, props.product.id);
+              }}
+            >
               {" "}
               +{" "}
             </a>
-            <input className="cart_quantity_input" type="text" name="quantity" value={props.amount} autoComplete="off" size="2" />
-            <a className="cart_quantity_down" href="">
+            <input className="cart_quantity_input" type="text" name="quantity" onChange={value => console.log("onChange : ", value)} value={props.amount} autoComplete="off" size="2" />
+            <a
+              className="cart_quantity_down"
+              onClick={() => {
+                props.decrementAmount(props.amount, props.product.id);
+              }}
+            >
               {" "}
               -{" "}
             </a>
@@ -34,7 +44,7 @@ function BasketLigne(props) {
           <p className="cart_total_price">{props.product.price * props.amount}MAD</p>
         </td>
         <td className="cart_delete">
-          <a className="cart_quantity_delete" href="">
+          <a className="cart_quantity_delete" onClick={() => props.deleteItem(props.product.id)}>
             <i className="fa fa-times"></i>
           </a>
         </td>

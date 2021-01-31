@@ -32,7 +32,7 @@ function ProductCard(props) {
   }
   function compareValIsExist(val, listOfVal) {
     for (let item of listOfVal) {
-      if (JSON.stringify(item) === JSON.stringify(val)) {
+      if (item.idProduct === val.idProduct) {
         return true;
       }
     }

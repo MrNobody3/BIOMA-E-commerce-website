@@ -8,16 +8,19 @@ import { useImmerReducer } from "use-immer";
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
 import Cart from "./components/Cart";
+import { notification } from "antd";
 
 function App() {
   const initialValue = {
-    shoppingCartCount: 0,
-    flashMessages: []
+    shoppingCartCount: 0
   };
   function ourReducer(draft, action) {
     switch (action.type) {
       case "incrementShoppingCartCount":
         draft.shoppingCartCount++;
+        return;
+      case "decrementShoppingCartCount":
+        draft.shoppingCartCount--;
         return;
     }
   }
