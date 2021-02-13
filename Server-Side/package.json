@@ -1,0 +1,23 @@
+{
+  "name": "bioma-back",
+  "version": "0.0.0",
+  "description": "This is the backend part for the bioma e-commerce website",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zakaria Tourabi",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-graphql": "^0.12.0",
+    "graphql": "^15.5.0",
+    "graphql-date": "^1.0.3",
+    "joi": "^17.4.0",
+    "joi-objectid": "^3.0.1",
+    "mongoose": "^5.11.16",
+    "winston": "^3.3.3",
+    "winston-mongodb": "^5.0.7"
+  }
+}
