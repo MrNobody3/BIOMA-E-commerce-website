@@ -2,8 +2,10 @@ import React, { useEffect, useState, useContext } from "react";
 import { Cookies } from "react-cookie";
 import { useImmer } from "use-immer";
 import BasketLigne from "./BasketLigne";
+import Page from "./Page";
 import DispatchContext from "../DispatchContext";
 import { ECO_TAX, SHIPPING_COST } from "../constants/constants";
+import { Link } from "react-router-dom";
 
 function Cart() {
   const [state, setState] = useImmer([
@@ -31,7 +33,8 @@ function Cart() {
     }
     if (cookiesFromBrowser.get("shoppingCart") && cookiesFromBrowser.get("shoppingCart").length) {
       for (let i = 0; i < cookiesFromBrowser.get("shoppingCart").length; i++) {
-        var productfetched = getProductById(cookiesFromBrowser.get("shoppingCart")[i].idProduct);
+        console.log("idProduct: ", cookiesFromBrowser.get("shoppingCart")[i].idProduct);
+        let productfetched = getProductById(cookiesFromBrowser.get("shoppingCart")[i].idProduct);
         setState(draft => {
           draft.push({ product: productfetched, amount: cookiesFromBrowser.get("shoppingCart")[i].amount });
         });
@@ -97,7 +100,7 @@ function Cart() {
   }
 
   return (
-    <>
+    <Page title={"Cart"}>
       <section id="cart_items">
         <div className="container">
           <div className="table-responsive cart_info">
@@ -140,18 +143,18 @@ function Cart() {
                     Total <span>{formatTotale()}</span>
                   </li>
                 </ul>
-                <a className="btn btn-default update" href="">
+                {/* <a className="btn btn-default update" href="">
                   Update
-                </a>
-                <a className="btn btn-default check_out" href="">
+                </a> */}
+                <Link className="btn btn-default check_out" to="/checkout">
                   Check Out
-                </a>
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </section>
-    </>
+    </Page>
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import StateContext from "../StateContext";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 function Header() {
   const appState = useContext(StateContext);
@@ -71,9 +71,9 @@ function Header() {
             <div className="row">
               <div className="col-md-4 clearfix">
                 <div className="logo pull-left">
-                  <a href="index.html">
+                  <Link to="/">
                     <img src="images/home/logo.png" alt="" />
-                  </a>
+                  </Link>
                 </div>
                 <div className="btn-group pull-right clearfix">
                   {/*
@@ -146,9 +146,9 @@ function Header() {
                 <div className="mainmenu pull-left">
                   <ul className="nav navbar-nav collapse navbar-collapse">
                     <li>
-                      <a href="index.html" className="active">
+                      <NavLink to="/" activeClassName="active">
                         Home
-                      </a>
+                      </NavLink>
                     </li>
                     <li className="dropdown">
                       <a href="#">
@@ -156,37 +156,24 @@ function Header() {
                       </a>
                       <ul role="menu" className="sub-menu">
                         <li>
-                          <a href="shop.html">Products</a>
+                          <NavLink to="/products" activeClassName="active">
+                            products
+                          </NavLink>
                         </li>
                         <li>
-                          <a href="product-details.html">Product Details</a>
+                          <NavLink to="/checkout" activeClassName="active">
+                            Checkout
+                          </NavLink>
                         </li>
                         <li>
-                          <a href="checkout.html">Checkout</a>
+                          <NavLink to="/cart" activeClassName="active">
+                            Cart
+                          </NavLink>
                         </li>
-                        <li>
-                          <a href="cart.html">Cart</a>
-                        </li>
-                        <li>
+                        {/* <li>
                           <a href="login.html">Login</a>
-                        </li>
+                        </li> */}
                       </ul>
-                    </li>
-                    <li className="dropdown">
-                      <a href="#">
-                        Blog<i className="fa fa-angle-down"></i>
-                      </a>
-                      <ul role="menu" className="sub-menu">
-                        <li>
-                          <a href="blog.html">Blog List</a>
-                        </li>
-                        <li>
-                          <a href="blog-single.html">Blog Single</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li>
-                      <a href="404.html">404</a>
                     </li>
                     <li>
                       <a href="contact-us.html">Contact</a>

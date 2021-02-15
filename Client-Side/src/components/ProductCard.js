@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { withCookies, useCookies, Cookies } from "react-cookie";
 import DispatchContext from "../DispatchContext";
 import { notification } from "antd";
-
+import { Link } from "react-router-dom";
 function ProductCard(props) {
   const [cookies, setCookie] = useCookies(["shoppingCart"]);
   var cookiesFromBrowser = new Cookies();
@@ -40,7 +40,7 @@ function ProductCard(props) {
   }
 
   return (
-    <div key={props.id} className="col-sm-4">
+    <div key={props.product.id} className="col-sm-4">
       <div className="product-image-wrapper">
         <div className="single-products">
           <div className="productinfo text-center">
@@ -65,9 +65,9 @@ function ProductCard(props) {
         <div className="choose">
           <ul className="nav nav-pills nav-justified">
             <li>
-              <a href="#">
+              <Link to={`/productDetail/${props.product.id}`}>
                 <i className=" ti-eye"></i>Consulter produit
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

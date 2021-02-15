@@ -8,11 +8,14 @@ import { useImmerReducer } from "use-immer";
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
 import Cart from "./components/Cart";
-import { notification } from "antd";
+import Checkout from "./components/Checkout";
+import ProductDetail from "./components/ProductDetail";
+import NotFound from "./components/NotFound";
 
 function App() {
   const initialValue = {
-    shoppingCartCount: 0
+    shoppingCartCount: 0,
+    cartSubtotale: 0
   };
   function ourReducer(draft, action) {
     switch (action.type) {
@@ -21,6 +24,10 @@ function App() {
         return;
       case "decrementShoppingCartCount":
         draft.shoppingCartCount--;
+        return;
+      case "cartSubtotale":
+        draft.cartSubtotale = action.value;
+        console.log("Dispatching cart sub totale with value: ", action.value);
         return;
     }
   }
@@ -48,6 +55,13 @@ function App() {
               <Route path="/cart">
                 <Cart />
               </Route>
+              <Route path="/checkout">
+                <Checkout />
+              </Route>
+              <Route path="/productDetail/:idProduct">
+                <ProductDetail />
+              </Route>
+              <Route component={NotFound}></Route>
             </Switch>
           </BrowserRouter>
         </DispatchContext.Provider>
