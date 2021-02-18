@@ -1,12 +1,13 @@
-const Joi = require("joi");
-Joi.objectId = require("joi-objectid")(Joi);
+// const Joi = require("joi");
+// Joi.objectId = require("joi-objectid")(Joi);
 const express = require("express");
-const { graphqlHTTP } = require("express-graphql");
 const winston = require("winston");
 const cors = require("cors");
-const schema = require("./schema");
-const { Product } = require("./models/product");
-const { Category } = require("./models/category");
+const typeDefs = require("./schema");
+const resolvers = require("./resolvers");
+// const { Product } = require("./models/product");
+// const { Category } = require("./models/category");
+const { ApolloServer } = require("apollo-server-express");
 const app = express();
 
 require("./startup/logging")();
@@ -21,14 +22,8 @@ app.use(cors());
 //   await new Product({ name: "Product 2", price: 100, category, numberInStock: 100 }).save();
 // }
 // createProducts();
+const server = new ApolloServer({ typeDefs, resolvers });
 
-app.use(
-  "/graphql",
-  graphqlHTTP({
-    schema,
-    graphiql: true
-  })
-);
-
+server.applyMiddleware({ app });
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => winston.info(`Server listening on PORT ${PORT}`));
+app.listen(PORT, () => winston.info(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`));
