@@ -1,6 +1,6 @@
 import "./App.css";
 import { useEffect } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import CategoriesNav from "./components/CategoriesNav";
 import Header from "./components/Header";
 import { CookiesProvider, Cookies } from "react-cookie";
@@ -11,6 +11,11 @@ import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
 import ProductDetail from "./components/ProductDetail";
 import NotFound from "./components/NotFound";
+import AdminHome from "./components/admin/AdminHome";
+import Store from "./components/Store";
+import { ApolloClient, ApolloProvider } from "@apollo/client";
+import { cache } from "./cache";
+import { API_BASE_URL } from "./constants/constants";
 
 function App() {
   const initialValue = {
@@ -34,6 +39,11 @@ function App() {
 
   const [state, dispatch] = useImmerReducer(ourReducer, initialValue);
 
+  const client = new ApolloClient({
+    cache,
+    uri: API_BASE_URL
+  });
+
   useEffect(() => {
     var cookiesFromBrowser = new Cookies();
     if (cookiesFromBrowser.get("shoppingCart") && cookiesFromBrowser.get("shoppingCart").length) {
@@ -43,11 +53,25 @@ function App() {
     }
   }, []);
   return (
-    <CookiesProvider>
-      <StateContext.Provider value={state}>
-        <DispatchContext.Provider value={dispatch}>
-          <BrowserRouter>
-            <Header />
+    <ApolloProvider client={client}>
+      <CookiesProvider>
+        <StateContext.Provider value={state}>
+          <DispatchContext.Provider value={dispatch}>
+            <BrowserRouter>
+              <Switch>
+                <Route
+                  path="/"
+                  render={({ match: { url } }) => (
+                    <>
+                      <Store />
+                    </>
+                  )}
+                />
+                <Route path="/admin">
+                  <AdminHome />
+                </Route>
+              </Switch>
+              {/* <Header />
             <Switch>
               <Route path="/" exact>
                 <CategoriesNav />
@@ -62,11 +86,12 @@ function App() {
                 <ProductDetail />
               </Route>
               <Route component={NotFound}></Route>
-            </Switch>
-          </BrowserRouter>
-        </DispatchContext.Provider>
-      </StateContext.Provider>
-    </CookiesProvider>
+            </Switch> */}
+            </BrowserRouter>
+          </DispatchContext.Provider>
+        </StateContext.Provider>
+      </CookiesProvider>
+    </ApolloProvider>
   );
 }
 

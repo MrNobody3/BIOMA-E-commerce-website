@@ -8,8 +8,9 @@ function ProductDetail(props) {
     img: "https://media.macphun.com/img/uploads/customer/how-to/579/15531840725c93b5489d84e9.43781620.jpg?q=85&w=1340",
     name: "Test produit",
     price: "20.00",
-    categorie: "Categorie 2",
-    dateCreated: null
+    categorie: { name: "Accessoire" },
+    dateCreated: null,
+    numberInstock: 0
   });
   useEffect(() => {
     if (idPoduct) {
@@ -24,7 +25,7 @@ function ProductDetail(props) {
         <div class="product-details">
           <div class="col-sm-5">
             <div class="view-product">
-              <img src="images/product-details/1.jpg" alt="" />
+              <img src={product.img} alt="" />
               <h3>ZOOM</h3>
             </div>
             <div id="similar-product" class="carousel slide" data-ride="carousel">
@@ -75,26 +76,27 @@ function ProductDetail(props) {
           <div class="col-sm-7">
             <div class="product-information">
               <img src="images/product-details/new.jpg" class="newarrival" alt="" />
-              <h2>Anne Klein Sleeveless Colorblock Scuba</h2>
+              <h2>{product.name}</h2>
               <p>Web ID: 1089772</p>
               <img src="images/product-details/rating.png" alt="" />
               <span>
-                <span>US $59</span>
+                <span>{product.price} MAD</span>
                 <label>Quantity:</label>
-                <input type="text" value="3" />
+                <input type="text" value="1" />
                 <button type="button" class="btn btn-fefault cart">
                   <i class="fa fa-shopping-cart"></i>
                   Add to cart
                 </button>
               </span>
               <p>
-                <b>Availability:</b> In Stock
+                <b>Availability:</b>
+                {product.numberInstock > 0 ? "In Stock" : "Not in Stock for the moment"}
               </p>
               <p>
-                <b>Condition:</b> New
+                <b>Condition:</b> {product.dateCreated > new Date().setTime(new Date().getTime() - 7 * 24 * 60 * 60 * 1000) ? "New" : ""}
               </p>
               <p>
-                <b>Brand:</b> E-SHOPPER
+                <b>Category:</b> {product.categorie.name}
               </p>
               <a href="">
                 <img src="images/product-details/share.png" class="share img-responsive" alt="" />
@@ -102,6 +104,9 @@ function ProductDetail(props) {
             </div>
           </div>
         </div>
+        {/*
+			//ADD Related Products Section
+		*/}
       </div>
     </>
   );

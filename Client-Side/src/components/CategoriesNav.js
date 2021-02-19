@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Link, BrowserRouter, Switch, Route } from "react-router-dom";
+import React, { useState } from "react";
 import ProductByCategorie from "./ProductByCategorie";
+import { gql, useQuery } from "@apollo/client";
 
 function CategoriesNav() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [idCategory, setIdCategory] = useState();
-  const [categories, setCategories] = useState([
-    { id: 1, name: "Categorie1" },
-    { id: 2, name: "Categorie2" }
-  ]);
-  useEffect(() => {
-    //Async Operation
-    async function fetchCategories() {
-      // Calling the api endpoint getAllCategories();
-      //const response = await Axios.get(`profile/${username}/followers`);
-      //setCategories(response.data);
-      setIsLoading(false);
+  const GET_CATEGORIES = gql`
+    query GetCategories {
+      categories {
+        id
+        name
+      }
     }
-    fetchCategories();
-  }, []);
+  `;
+  const { data, loading, error } = useQuery(GET_CATEGORIES);
+  const [idCategory, setIdCategory] = useState();
 
-  //if (isLoading) return <LoadingDotsIcon />;
+  if (loading) return <p>Loadiing... (To implement)</p>;
+  if (error) return <p>ERROR</p>;
+  if (!data) return <p>Not found</p>;
 
   return (
     <>
@@ -30,25 +26,26 @@ function CategoriesNav() {
             <div className="left-sidebar">
               <h2>Category</h2>
               <div className="panel-group category-products" id="accordian">
-                {categories.map(category => {
-                  return (
-                    <div key={category.id} className="panel panel-default">
-                      <div className="panel-heading">
-                        <h4 className="panel-title">
-                          {/* <Link data-for="category" data-tip="My Profile" to={`/productByCategory/${category.id}`}>
+                {data.categories &&
+                  data.categories.map(category => {
+                    return (
+                      <div key={category.id} className="panel panel-default">
+                        <div className="panel-heading">
+                          <h4 className="panel-title">
+                            {/* <Link data-for="category" data-tip="My Profile" to={`/productByCategory/${category.id}`}>
                             {category.name}
                           </Link> */}
-                          <a data-toggle="collapse" data-parent="#accordian" onClick={() => setIdCategory(category.id)}>
-                            {/* <span class="badge pull-right">
+                            <a data-toggle="collapse" data-parent="#accordian" onClick={() => setIdCategory(category.id)}>
+                              {/* <span class="badge pull-right">
                               <i class="fa fa-plus"></i>
                             </span> */}
-                            {category.name}
-                          </a>
-                        </h4>
+                              {category.name}
+                            </a>
+                          </h4>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             </div>
           </div>

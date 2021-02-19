@@ -20,7 +20,7 @@ function Header() {
                     </li>
                     <li>
                       <a href="#">
-                        <i className="fa fa-phone"></i> +212 6 00 213113
+                        <i className="fa fa-phone"></i> +212 6 54 354046
                       </a>
                     </li>
                     <li>
