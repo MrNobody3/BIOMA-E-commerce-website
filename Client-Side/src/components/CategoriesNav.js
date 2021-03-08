@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ProductByCategorie from "./ProductByCategorie";
 import { gql, useQuery } from "@apollo/client";
+import Products from "./Products";
+import PreLoader from "./PreLoader";
 
 function CategoriesNav() {
   const GET_CATEGORIES = gql`
@@ -12,9 +14,14 @@ function CategoriesNav() {
     }
   `;
   const { data, loading, error } = useQuery(GET_CATEGORIES);
-  const [idCategory, setIdCategory] = useState();
+  const [idCategory, setIdCategory] = useState(null);
 
-  if (loading) return <p>Loadiing... (To implement)</p>;
+  if (loading)
+    return (
+      <>
+        <PreLoader />
+      </>
+    );
   if (error) return <p>ERROR</p>;
   if (!data) return <p>Not found</p>;
 
@@ -49,7 +56,8 @@ function CategoriesNav() {
               </div>
             </div>
           </div>
-          <ProductByCategorie idCategory={idCategory} />
+          {idCategory != null ? <ProductByCategorie idCategory={idCategory} /> : <Products />}
+          {/* <ProductByCategorie idCategory={idCategory} /> */}
           {/* <Switch>
             <Route path="/productByCategory/:idCategory">
               <ProductByCategorie />

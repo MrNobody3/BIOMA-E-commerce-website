@@ -28,6 +28,10 @@ const productSchema = new mongoose.Schema({
   images: {
     type: [String]
   }
+  // buyCount : {
+  //   type: Number,
+  //   min: 0
+  // }
 });
 
 const Product = mongoose.model("Product", productSchema);

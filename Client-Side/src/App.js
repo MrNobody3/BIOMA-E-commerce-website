@@ -1,6 +1,6 @@
 import "./App.css";
 import { useEffect } from "react";
-import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Link, useRouteMatch } from "react-router-dom";
 import CategoriesNav from "./components/CategoriesNav";
 import Header from "./components/Header";
 import { CookiesProvider, Cookies } from "react-cookie";
@@ -59,6 +59,10 @@ function App() {
           <DispatchContext.Provider value={dispatch}>
             <BrowserRouter>
               <Switch>
+                {/* <Route path="/home" exact>
+                  <Home />
+                </Route> */}
+
                 <Route
                   path="/"
                   render={({ match: { url } }) => (

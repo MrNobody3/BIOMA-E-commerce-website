@@ -1123,6 +1123,11 @@ h2.title {
   color: #fff;
 }
 
+.myCustomClass {
+  background: #fe980f;
+  color: #fff;
+}
+
 /*************************
 *******Product Details CSS******
 **************************/

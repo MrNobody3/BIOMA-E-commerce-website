@@ -22,11 +22,32 @@ module.exports = {
   Date: dateScalar,
   Query: {
     categories: async (_, __, context) => await Category.find().sort({ name: 1 }),
-    productsByCategoryID: async (_, { id }, context) => {
+    productsByCategoryID: async (_, { id, pageNumber, pageSize = 9 }, context) => {
+      if (pageSize < 1) return { totalProducts: null, products: [] };
       const category = await Category.findById(id);
       if (!category) return { errorMessage: "Invalid Category" };
-      const products = await Product.find({ category }).sort("createdDate");
-      return products;
+      const totalProducts = await Product.find({ category }).count();
+      const products = await Product.find({ category })
+        .skip(pageNumber > 0 ? (pageNumber - 1) * pageSize : 0)
+        .limit(pageSize);
+      return { totalProducts, products };
+    },
+    products: async (_, { pageNumber, pageSize = 9 }, context) => {
+      if (pageSize < 1) return { totalProducts: null, products: [] };
+      const totalProducts = await Product.find().count();
+      const products = await Product.find()
+        .skip(pageNumber > 0 ? (pageNumber - 1) * pageSize : 0)
+        .limit(pageSize)
+        .sort("createdDate");
+      return { totalProducts, products };
+    },
+    product: async (_, { id }, context) => {
+      return await Product.findById(id);
     }
+    // products: async (_, { pageSize = 9, after }, context) => {
+    //   const results = await Product.find().count();
+    //   console.log(results);
+    // }
+    // count: async (_, __) => await Product.find().count()
   }
 };

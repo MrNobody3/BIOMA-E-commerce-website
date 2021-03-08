@@ -4,7 +4,12 @@ import { Cookies } from "react-cookie";
 import { withRouter } from "react-router-dom";
 import { useImmerReducer } from "use-immer";
 import Page from "./Page";
+import { useQuery } from "@apollo/client";
+import { GET_PRODUCT } from "./Cart";
+
 function Checkout(props) {
+  var cookiesFromBrowser = new Cookies();
+  let totale = 0;
   const [subTotale, setSubTotale] = useState(0);
   const initialValue = {
     firstName: {
@@ -128,33 +133,18 @@ function Checkout(props) {
   }
   const [state, dispatch] = useImmerReducer(ourReducer, initialValue);
 
-  useEffect(() => {
-    //Read the cookies
-    //get the product by his id from the cookie
-    //read the amount from each product from the cookies
-    //and set the sub totale by the price of the product fetched and his amount
-    var cookiesFromBrowser = new Cookies();
-    let totale = 0;
-    function getProductById(idProduct) {
-      //this function to fetch the product from the server by his id
-      const product = {
-        id: idProduct,
-        img: "",
-        name: `"Produit " ${idProduct}`,
-        price: "20.00",
-        categorie: "Categorie 2",
-        dateCreated: null
-      };
-      return product;
-    }
-    if (cookiesFromBrowser.get("shoppingCart") && cookiesFromBrowser.get("shoppingCart").length) {
-      for (let i = 0; i < cookiesFromBrowser.get("shoppingCart").length; i++) {
-        let priceProduct = getProductById(cookiesFromBrowser.get("shoppingCart")[i].idProduct).price;
-        totale += priceProduct * cookiesFromBrowser.get("shoppingCart")[i].amount;
-      }
-      setSubTotale(totale);
-    }
-  }, []);
+  function ProductById({ idProduct }, amount) {
+    const { loading, error, data } = useQuery(GET_PRODUCT, {
+      variables: { id: idProduct }
+    });
+
+    if (loading) return null;
+    if (error) return `Error! ${error}`;
+    totale += parseFloat(data.product.price) * parseFloat(amount);
+  }
+
+  cookiesFromBrowser.get("shoppingCart") && cookiesFromBrowser.get("shoppingCart").length && cookiesFromBrowser.get("shoppingCart").map(cookie => ProductById({ idProduct: cookie.idProduct }, cookie.amount));
+
   useEffect(() => {
     if (state.submitCount) {
       //Logic to handle
@@ -165,8 +155,8 @@ function Checkout(props) {
     }
   }, [state.submitCount]);
   function formatTotale() {
-    if (SHIPPING_COST !== "Free") return subTotale + parseFloat(SHIPPING_COST) + parseFloat(ECO_TAX);
-    return subTotale + parseFloat(ECO_TAX);
+    if (SHIPPING_COST !== "Free") return totale + parseFloat(SHIPPING_COST) + parseFloat(ECO_TAX);
+    return totale + parseFloat(ECO_TAX);
   }
 
   function validateOrder(event) {
@@ -262,7 +252,7 @@ function Checkout(props) {
                         <label>
                           Address <span>*</span>
                         </label>
-                        <input onChange={e => dispatch({ type: "adresseImmediatly", value: e.target.value })} type="text" name="address" placeholder="" required="required" />
+                        <input onChange={e => dispatch({ type: "adresseImmediatly", value: e.target.value })} type="text" name="address" placeholder="address goes here" required="required" />
                         {state.address.hasErrors && <div class="alert alert-danger small">{state.address.message}</div>}
                       </div>
                     </div>
@@ -271,7 +261,7 @@ function Checkout(props) {
                         <label>
                           Postal Code<span>*</span>
                         </label>
-                        <input onChange={e => dispatch({ type: "codePostalImmediatly", value: e.target.value })} type="text" name="post" placeholder="" required="required" />
+                        <input onChange={e => dispatch({ type: "codePostalImmediatly", value: e.target.value })} type="text" name="post" placeholder="PostalCode goes here" required="required" />
                         {state.codePostal.hasErrors && <div class="alert alert-danger small">{state.codePostal.message}</div>}
                       </div>
                     </div>
@@ -292,7 +282,7 @@ function Checkout(props) {
                   <div className="content">
                     <ul>
                       <li>
-                        Sub Total<span>{subTotale}</span>
+                        Sub Total<span>{totale}</span>
                       </li>
                       <li>
                         (+) Shipping<span>{SHIPPING_COST}</span>
@@ -335,12 +325,12 @@ function Checkout(props) {
                     </div>
                   </div>
                 </div> */}
-                {subTotale > 0 ? (
+                {totale > 0 ? (
                   <button class="btn btn-primary centerButton" onClick={validateOrder}>
                     proceed to checkout
                   </button>
                 ) : (
-                  <button class="btn btn-primary">Go add Some Products to your Cart</button>
+                  <button class="btn btn-primary centerButton">Go add Some Products to your Cart</button>
                 )}
               </div>
             </div>

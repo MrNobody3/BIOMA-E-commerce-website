@@ -44,9 +44,10 @@ function ProductCard(props) {
       <div className="product-image-wrapper">
         <div className="single-products">
           <div className="productinfo text-center">
-            <img src={props.product.img} alt="" />
+            <img src={"images/shop/product7.jpg"} alt="" />
             <h2>{props.product.price}MAD</h2>
             <p>{props.product.name}</p>
+            <p>Category : {props.product.category.name.toUpperCase()}</p>
             <a onClick={() => addToCart(props.product)} className="btn btn-default add-to-cart">
               <i className="fa fa-shopping-cart"></i>Add to cart
             </a>
@@ -65,7 +66,7 @@ function ProductCard(props) {
         <div className="choose">
           <ul className="nav nav-pills nav-justified">
             <li>
-              <Link to={`/productDetail/${props.product.id}`}>
+              <Link to={`/products/${props.product.id}`}>
                 <i className=" ti-eye"></i>Consulter produit
               </Link>
             </li>

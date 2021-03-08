@@ -2,12 +2,25 @@ import React, { useState } from "react";
 import ProductCard from "./ProductCard";
 import Pagination from "./Pagination";
 import { gql, useQuery } from "@apollo/client";
-import { PRODUCT_TILE_DATA } from "./Products";
 import PreLoader from "./PreLoader";
 
-export const GET_PRODUCT_BYCATEGORY = gql`
-  query GetProductByIdCategorie($categoryId: ID!, $pageNumber: Int, $pageSize: Int) {
-    productsByCategoryID(id: $categoryId, pageNumber: $pageNumber, pageSize: $pageSize) {
+export const PRODUCT_TILE_DATA = gql`
+  fragment ProductTile on Product {
+    __typename
+    id
+    name
+    price
+    category {
+      name
+    }
+    images
+    numberInStock
+    createdDate
+  }
+`;
+export const GET_ALL_PRODUCTS = gql`
+  query GetAllProducts($pageNumber: Int, $pageSize: Int) {
+    products(pageNumber: $pageNumber, pageSize: $pageSize) {
       totalProducts
       products {
         ...ProductTile
@@ -17,12 +30,11 @@ export const GET_PRODUCT_BYCATEGORY = gql`
   ${PRODUCT_TILE_DATA}
 `;
 
-function ProductByCategorie(props) {
+function Products(props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(9);
-
-  const { data, loading, error } = useQuery(GET_PRODUCT_BYCATEGORY, {
-    variables: { categoryId: props.idCategory, pageNumber: 1, pageSize: 9 }
+  const { data, loading, error } = useQuery(GET_ALL_PRODUCTS, {
+    variables: { pageNumber: currentPage, pageSize: 9 }
   });
 
   if (loading)
@@ -31,7 +43,7 @@ function ProductByCategorie(props) {
         <PreLoader />
       </>
     );
-  if (error) return <p>ERROR {error}</p>;
+  if (error) return <p>ERROR</p>;
   if (!data) return <p>Not found</p>;
 
   // Change page
@@ -41,18 +53,17 @@ function ProductByCategorie(props) {
       <div className="col-sm-9 padding-right">
         <div className="features_items">
           <h2 className="title text-center">Items</h2>
-          {data.productsByCategoryID.products && data.productsByCategoryID.products.length == 0 && <div>No items Found for this Category</div>}
-          {data.productsByCategoryID &&
-            data.productsByCategoryID.products.map(product => {
+          {data.products &&
+            data.products.products.map(product => {
               return <ProductCard key={product.id} product={product} />;
             })}
         </div>
         <div className="centerPagination">
-          <Pagination postsPerPage={productsPerPage} totalPosts={data.productsByCategoryID.totalProducts} currentNumber={currentPage} paginate={paginate} />
+          <Pagination postsPerPage={productsPerPage} totalPosts={data.products.totalProducts} paginate={paginate} currentNumber={currentPage} />
         </div>
       </div>
     </>
   );
 }
 
-export default ProductByCategorie;
+export default Products;

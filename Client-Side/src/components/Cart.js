@@ -1,89 +1,80 @@
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 import { Cookies } from "react-cookie";
-import { useImmer } from "use-immer";
 import BasketLigne from "./BasketLigne";
 import Page from "./Page";
-import DispatchContext from "../DispatchContext";
 import { ECO_TAX, SHIPPING_COST } from "../constants/constants";
 import { Link } from "react-router-dom";
+import { gql, useQuery } from "@apollo/client";
+import PreLoader from "./PreLoader";
+
+export const GET_PRODUCT = gql`
+  query GetProduct($id: ID!) {
+    product(id: $id) {
+      id
+      name
+      price
+      category {
+        name
+      }
+      numberInStock
+    }
+  }
+`;
 
 function Cart() {
-  const [state, setState] = useImmer([
-    {
-      product: {},
-      amount: 1
-    }
-  ]);
-  const [cartSubTotale, setCartSubTotale] = useState(0);
-  const appDispatch = useContext(DispatchContext);
-  useEffect(() => {
-    var cookiesFromBrowser = new Cookies();
-    let totale = 0;
-    function getProductById(idProduct) {
-      //this function to fetch the product from the server by his id
-      const product = {
-        id: idProduct,
-        img: "",
-        name: `"Produit " ${idProduct}`,
-        price: "20.00",
-        categorie: "Categorie 2",
-        dateCreated: null
-      };
-      return product;
-    }
-    if (cookiesFromBrowser.get("shoppingCart") && cookiesFromBrowser.get("shoppingCart").length) {
-      for (let i = 0; i < cookiesFromBrowser.get("shoppingCart").length; i++) {
-        console.log("idProduct: ", cookiesFromBrowser.get("shoppingCart")[i].idProduct);
-        let productfetched = getProductById(cookiesFromBrowser.get("shoppingCart")[i].idProduct);
-        setState(draft => {
-          draft.push({ product: productfetched, amount: cookiesFromBrowser.get("shoppingCart")[i].amount });
-        });
-        totale += productfetched.price * cookiesFromBrowser.get("shoppingCart")[i].amount;
-      }
-      setCartSubTotale(totale);
-    }
-  }, []);
+  var cookieFromBrowser = new Cookies();
+  let totale = 0;
+
+  function ProductById({ idProduct }, amount) {
+    const { loading, error, data } = useQuery(GET_PRODUCT, {
+      variables: { id: idProduct }
+    });
+
+    if (loading)
+      return (
+        <>
+          <PreLoader />
+        </>
+      );
+    if (error) return `Error! ${error}`;
+    totale += parseFloat(data.product.price) * parseFloat(amount);
+
+    return <BasketLigne key={data.product.id} product={data.product} amount={amount} incrementAmount={incrementAmountProduct} decrementAmount={decrementAmountProduct} deleteItem={deleteItem} />;
+  }
+
   function incrementAmountProduct(value, idProduct) {
     if (value < 10) {
-      setState(draft => {
-        draft.map(x => {
-          if (x.product.id === idProduct) {
-            x.amount = value + 1;
-            var newVal = parseFloat(cartSubTotale);
-            setCartSubTotale((newVal += parseFloat(x.product.price)));
-          }
-        });
-        updateCookie(draft);
+      let cookies = cookieFromBrowser.get("shoppingCart");
+      cookies.map(cookie => {
+        if (cookie.idProduct == idProduct) {
+          cookie.amount = value + 1;
+        }
       });
+      cookieFromBrowser.set("shoppingCart", cookies);
+      window.location.reload();
     }
   }
   function decrementAmountProduct(value, idProduct) {
     if (value > 1) {
-      setState(draft => {
-        draft.map(x => {
-          if (x.product.id === idProduct) {
-            x.amount = value - 1;
-            var newVal = parseFloat(cartSubTotale);
-            setCartSubTotale((newVal -= parseFloat(x.product.price)));
-          }
-        });
-        updateCookie(draft);
+      let cookies = cookieFromBrowser.get("shoppingCart");
+      cookies.map(cookie => {
+        if (cookie.idProduct == idProduct) {
+          cookie.amount = value - 1;
+        }
       });
+      cookieFromBrowser.set("shoppingCart", cookies);
+      window.location.reload();
     }
   }
 
   function deleteItem(idProduct) {
-    setState(draft => {
-      const index = draft.findIndex(x => x.product.id === idProduct);
-      var totleIndex = parseFloat(draft[index].product.price) * parseFloat(draft[index].amount);
-      var newVal = parseFloat(cartSubTotale);
-      if (index !== -1) {
-        draft.splice(index, 1);
-        setCartSubTotale((newVal -= parseFloat(totleIndex)));
-      }
-      updateCookie(draft);
-    });
-    appDispatch({ type: "decrementShoppingCartCount" });
+    let cookies = cookieFromBrowser.get("shoppingCart");
+    const index = cookies.findIndex(x => x.idProduct === idProduct);
+    if (index !== -1) {
+      cookies.splice(index, 1);
+      cookieFromBrowser.set("shoppingCart", cookies);
+      window.location.reload();
+    }
   }
   function updateCookie(draft) {
     const cookieFromBrowser = new Cookies();
@@ -95,8 +86,8 @@ function Cart() {
     cookieFromBrowser.set("shoppingCart", [...r]);
   }
   function formatTotale() {
-    if (SHIPPING_COST !== "Free") return cartSubTotale + parseFloat(SHIPPING_COST) + parseFloat(ECO_TAX);
-    return cartSubTotale + parseFloat(ECO_TAX);
+    if (SHIPPING_COST !== "Free") return totale + parseFloat(SHIPPING_COST) + parseFloat(ECO_TAX);
+    return totale + parseFloat(ECO_TAX);
   }
 
   return (
@@ -115,11 +106,7 @@ function Cart() {
                   <td></td>
                 </tr>
               </thead>
-              <tbody>
-                {state.map(item => {
-                  if (!(Object.keys(item.product).length === 0 && item.product.constructor === Object)) return <BasketLigne key={item.product.id} product={item.product} amount={item.amount} incrementAmount={incrementAmountProduct} decrementAmount={decrementAmountProduct} deleteItem={deleteItem} />;
-                })}
-              </tbody>
+              <tbody>{cookieFromBrowser.get("shoppingCart") && cookieFromBrowser.get("shoppingCart").length && cookieFromBrowser.get("shoppingCart").map(cookie => ProductById({ idProduct: cookie.idProduct }, cookie.amount))}</tbody>
             </table>
           </div>
         </div>
@@ -131,7 +118,7 @@ function Cart() {
               <div className="total_area">
                 <ul>
                   <li>
-                    Cart Sub Total <span>{cartSubTotale}</span>
+                    Cart Sub Total <span>{totale}</span>
                   </li>
                   <li>
                     Eco Tax <span>{ECO_TAX}</span>

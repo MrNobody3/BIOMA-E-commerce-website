@@ -35,7 +35,7 @@ function Header() {
                 <div className="social-icons pull-right">
                   <ul className="nav navbar-nav">
                     <li>
-                      <a href="#">
+                      <a href="https://www.facebook.com/zakaria.davide/">
                         <i className="fa fa-facebook"></i>
                       </a>
                     </li>
@@ -45,7 +45,7 @@ function Header() {
                       </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a href="https://www.linkedin.com/in/zakaria-tourabi-b5abb5142/">
                         <i className="fa fa-linkedin"></i>
                       </a>
                     </li>
@@ -181,9 +181,9 @@ function Header() {
                   </ul>
                 </div>
               </div>
-              <div className="col-sm-3">
+              <div className="col-sm-1">
                 <div className="search_box pull-right">
-                  <input type="text" placeholder="Search" />
+                  <input type="text" placeholder="Search a product" />
                 </div>
               </div>
             </div>

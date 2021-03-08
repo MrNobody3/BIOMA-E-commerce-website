@@ -82,7 +82,14 @@ const typeDefs = gql`
   }
   type Query {
     categories: [Category]
-    productsByCategoryID(id: ID!): [Product]
+    productsByCategoryID(id: ID!, pageNumber: Int, pageSize: Int): ProductConnection
+    products(pageNumber: Int, pageSize: Int): ProductConnection
+    product(id: ID!): Product
+    count: Int
+  }
+  type ProductConnection {
+    totalProducts: Int
+    products: [Product]
   }
 `;
 
